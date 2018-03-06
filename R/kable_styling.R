@@ -38,6 +38,7 @@
 #' @param row_label_position A character string determining the justification of the row
 #' labels in a table.  Possible values inclued `l` for left, `c` for center, and `r` for
 #' right.  The default value is `l` for left justifcation.
+#' @param extra_css Extra css text to be passed into the style of the table.
 #' @param ... extra options for HTML or LaTeX. See `details`.
 #'
 #' @details For LaTeX, extra options includes:
@@ -63,6 +64,7 @@ kable_styling <- function(kable_input,
                           position = "center",
                           font_size = NULL,
                           row_label_position = "l",
+                          extra_css = NULL,
                           ...) {
 
   if (length(bootstrap_options) == 1 && bootstrap_options == "basic") {
@@ -99,7 +101,9 @@ kable_styling <- function(kable_input,
                              bootstrap_options = bootstrap_options,
                              full_width = full_width,
                              position = position,
-                             font_size = font_size, ...))
+                             font_size = font_size,
+                             extra_css = extra_css,
+                             ...))
   }
   if (kable_format == "latex") {
     if (is.null(full_width)) {
@@ -121,7 +125,8 @@ htmlTable_styling <- function(kable_input,
                               full_width = T,
                               position = c("center", "left", "right",
                                            "float_left", "float_right"),
-                              font_size = NULL) {
+                              font_size = NULL,
+                              extra_css = NULL) {
   kable_attrs <- attributes(kable_input)
   kable_xml <- read_kable_as_xml(kable_input)
 
@@ -174,6 +179,10 @@ htmlTable_styling <- function(kable_input,
   )
   kable_xml_style <- c(kable_xml_style, position_style)
 
+  if (!is.null(extra_css)) {
+    kable_xml_style <- c(kable_xml_style, extra_css)
+  }
+  
   if (length(kable_xml_style) != 0) {
     xml_attr(kable_xml, "style") <- paste(kable_xml_style, collapse = " ")
   }
